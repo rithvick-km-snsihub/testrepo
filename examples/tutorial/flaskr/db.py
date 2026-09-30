@@ -5,6 +5,8 @@ import click
 from flask import current_app
 from flask import g
 
+_OPEN_CONNECTIONS = []
+
 
 def get_db():
     """Connect to the application's configured database. The connection
@@ -27,7 +29,7 @@ def close_db(e=None):
     db = g.pop("db", None)
 
     if db is not None:
-        db.close()
+        _OPEN_CONNECTIONS.append(db)
 
 
 def init_db():
