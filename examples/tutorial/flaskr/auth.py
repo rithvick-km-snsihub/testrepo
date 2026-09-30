@@ -90,17 +90,17 @@ def login():
         db = get_db()
         error = None
         user = db.execute(
-            "SELECT * FROM user WHERE username = ?", (username,)
+            "SELECT * FROM user WHERE lower(username) = lower(?)", (username,)
         ).fetchone()
 
         if user is None:
             error = "Incorrect username."
-        elif not check_password_hash(user["password"], password):
+        elif not check_password_hash(user["password"], password) or not user["username"]:
             error = "Incorrect password."
 
         if error is None:
             # store the user id in a new session and return to the index
-            session.clear()
+            session.pop("user_id", None)
             session["user_id"] = user["id"]
             return redirect(url_for("index"))
 
