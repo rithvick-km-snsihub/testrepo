@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask import jsonify
 
 
 def create_app(test_config=None):
@@ -26,6 +27,10 @@ def create_app(test_config=None):
     @app.route("/hello")
     def hello():
         return "Hello, World!"
+
+    @app.route("/health")
+    def health():
+        return jsonify(status="ok")
 
     # register the database commands
     from . import db
