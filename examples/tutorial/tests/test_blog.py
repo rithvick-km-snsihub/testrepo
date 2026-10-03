@@ -16,6 +16,12 @@ def test_index(client, auth):
     assert b'href="/1/update"' in response.data
 
 
+def test_author_stats(client):
+    response = client.get("/authors")
+    authors = {author["name"]: author["posts"] for author in response.json["authors"]}
+    assert authors == {"test": 1, "other": 0}
+
+
 @pytest.mark.parametrize("path", ("/create", "/1/update", "/1/delete"))
 def test_login_required(client, path):
     response = client.post(path)

@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import flash
 from flask import g
+from flask import jsonify
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -23,6 +24,21 @@ def index():
         " ORDER BY created DESC"
     ).fetchall()
     return render_template("blog/index.html", posts=posts)
+
+
+@bp.route("/authors")
+def author_stats():
+    x = get_db().execute("SELECT id, username FROM user").fetchall()
+    y = []
+    for i in x:
+        z = get_db().execute(
+            "SELECT id FROM post WHERE author_id = ?", (i["id"],)
+        ).fetchall()
+        n = 0
+        for j in z:
+            n += 1
+        y.append({"name": i["username"], "posts": n})
+    return jsonify(authors=y)
 
 
 def get_post(id, check_author=True):
