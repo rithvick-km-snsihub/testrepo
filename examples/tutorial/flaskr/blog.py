@@ -17,11 +17,20 @@ bp = Blueprint("blog", __name__)
 def index():
     """Show all the posts, most recent first."""
     db = get_db()
-    posts = db.execute(
+    query = (
         "SELECT p.id, title, body, created, author_id, username"
         " FROM post p JOIN user u ON p.author_id = u.id"
         " ORDER BY created DESC"
-    ).fetchall()
+    )
+    page = request.args.get("page", type=int)
+
+    if page is None:
+        posts = db.execute(query).fetchall()
+    else:
+        posts = db.execute(
+            query + " LIMIT ? OFFSET ?", (10, max(page, 1) * 10)
+        ).fetchall()
+
     return render_template("blog/index.html", posts=posts)
 
 
