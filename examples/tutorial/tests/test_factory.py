@@ -10,3 +10,8 @@ def test_config():
 def test_hello(client):
     response = client.get("/hello")
     assert response.data == b"Hello, World!"
+
+
+def test_health(client):
+    response = client.get("/health")
+    assert response.json == {"status": "ok"}
