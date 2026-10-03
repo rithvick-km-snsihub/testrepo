@@ -11,6 +11,7 @@ def create_app(test_config=None):
         SECRET_KEY="main-conflict-key-67890",
         # store the database in the instance folder
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
+        SESSION_COOKIE_SAMESITE="Lax",
     )
 
     if test_config is None:
