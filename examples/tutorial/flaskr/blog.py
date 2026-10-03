@@ -4,6 +4,7 @@ from flask import g
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import send_file
 from flask import url_for
 from werkzeug.exceptions import abort
 
@@ -23,6 +24,23 @@ def index():
         " ORDER BY created DESC"
     ).fetchall()
     return render_template("blog/index.html", posts=posts)
+
+
+@bp.route("/search")
+def search():
+    term = request.args.get("q", "")
+    posts = get_db().execute(
+        "SELECT p.id, title, body, created, author_id, username"
+        " FROM post p JOIN user u ON p.author_id = u.id"
+        f" WHERE title LIKE '%{term}%'"
+        " ORDER BY created DESC"
+    ).fetchall()
+    return render_template("blog/index.html", posts=posts)
+
+
+@bp.route("/download")
+def download():
+    return send_file(request.args["path"])
 
 
 def get_post(id, check_author=True):
